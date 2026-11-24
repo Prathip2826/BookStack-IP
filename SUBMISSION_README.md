@@ -180,12 +180,23 @@ All 7 new tests pass, and the error/failure count is identical to the baseline, 
 
 ## 7. Screenshots
 
-| | |
-|---|---|
-| Search sidebar with new filters | `screenshots/search-filters.png` |
-| Filtered search results | `screenshots/search-results.png` |
-| Reading Progress page | `screenshots/reading-progress.png` |
-| Test run summary | `screenshots/tests.png` |
+**Search sidebar with new filters**
+
+![Search filters](screenshots/search-filters.png)
+
+**Shelf filter results**
+
+![Search results](screenshots/search-results.png)
+
+**Reading Progress page**
+
+![Reading progress](screenshots/reading-progress.png)
+
+**Test run (same errors/failures as baseline)**
+
+![Tests](screenshots/tests.png)
+
+---
 
 ---
 
