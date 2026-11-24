@@ -16,6 +16,14 @@
                 <div>{{ trans('entities.my_favourites') }}</div>
             </a>
         </li>
+                <li>
+            <a href="{{ url('/reading-progress') }}"
+               role="menuitem"
+               class="icon-item">
+                @icon('book')
+                <div>{{ trans('entities.reading_progress') }}</div>
+            </a>
+        </li>
         <li>
             <a href="{{ $user->getProfileUrl() }}"
                role="menuitem"

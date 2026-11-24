@@ -214,6 +214,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/favourites/add', [ActivityControllers\FavouriteController::class, 'add']);
     Route::post('/favourites/remove', [ActivityControllers\FavouriteController::class, 'remove']);
 
+    // Reading progress
+    Route::get('/reading-progress', [ActivityControllers\ReadingProgressController::class, 'index']);
+
     // Watching
     Route::put('/watching/update', [ActivityControllers\WatchController::class, 'update']);
 

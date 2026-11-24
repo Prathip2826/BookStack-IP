@@ -3,6 +3,8 @@
 namespace BookStack\Search;
 
 use BookStack\Entities\EntityProvider;
+use BookStack\Entities\Models\Book;
+use BookStack\Entities\Models\Bookshelf;
 use BookStack\Entities\Models\Entity;
 use BookStack\Entities\Models\EntityTable;
 use BookStack\Entities\Queries\EntityQueries;
@@ -383,6 +385,50 @@ class SearchRunner
         }
     }
 
+        /**
+     * Filter by the user who created the item, using any user's slug.
+     */
+    protected function filterAuthor(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $user = User::query()->where('slug', '=', trim($input))->first(['id']);
+        if ($user) {
+            $this->applyNegatableWhere($query, $negated, 'created_by', '=', $user->id);
+        }
+    }
+
+    /**
+     * Filter to items within the books of the given shelf (workspace).
+     */
+    protected function filterInShelf(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $shelf = Bookshelf::visible()->where('slug', '=', trim($input))->first(['id']);
+        if (!$shelf) {
+            return;
+        }
+
+        $bookIds = DB::table('bookshelves_books')
+            ->where('bookshelf_id', '=', $shelf->id)
+            ->pluck('book_id');
+
+        $this->applyNegatableWhere($query, $negated, function (EloquentBuilder $query) use ($bookIds) {
+            $query->whereIn('book_id', $bookIds)
+                ->orWhere(function (EloquentBuilder $query) use ($bookIds) {
+                    $query->where('type', '=', 'book')->whereIn('id', $bookIds);
+                });
+        }, null, null);
+    }
+
+    /**
+     * Filter to items within the given book.
+     */
+    protected function filterInBook(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $book = Book::visible()->where('slug', '=', trim($input))->first(['id']);
+        if ($book) {
+            $this->applyNegatableWhere($query, $negated, 'book_id', '=', $book->id);
+        }
+    }
+    
     protected function filterInName(EloquentBuilder $query, string $input, bool $negated)
     {
         $this->applyNegatableWhere($query, $negated, 'name', 'like', '%' . $input . '%');

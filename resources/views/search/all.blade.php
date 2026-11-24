@@ -58,6 +58,15 @@
                             @endcomponent
                         @endif
 
+                                                <h6>{{ trans('entities.search_workspace_options') }}</h6>
+                        @include('search.parts.select-filter', ['name' => 'in_shelf', 'filters' => $filterMap, 'options' => $filterShelves])
+                        @include('search.parts.select-filter', ['name' => 'in_book', 'filters' => $filterMap, 'options' => $filterBooks])
+
+                        @if(!user()->isGuest())
+                            <h6>{{ trans('entities.search_author_options') }}</h6>
+                            @include('search.parts.select-filter', ['name' => 'author', 'filters' => $filterMap, 'options' => $filterUsers])
+                        @endif
+
                         <h6>{{ trans('entities.search_date_options') }}</h6>
                         @include('search.parts.date-filter', ['name' => 'updated_after', 'filters' => $filterMap])
                         @include('search.parts.date-filter', ['name' => 'updated_before', 'filters' => $filterMap])
