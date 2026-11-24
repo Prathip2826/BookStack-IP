@@ -2,18 +2,23 @@
 
 namespace BookStack\Search;
 
+use BookStack\Entities\Queries\BookQueries;
+use BookStack\Entities\Queries\BookshelfQueries;
 use BookStack\Entities\Queries\PageQueries;
 use BookStack\Entities\Queries\QueryPopular;
 use BookStack\Entities\Tools\SiblingFetcher;
 use BookStack\Http\Controller;
+use BookStack\Users\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchController extends Controller
 {
-    public function __construct(
+        public function __construct(
         protected SearchRunner $searchRunner,
         protected PageQueries $pageQueries,
+        protected BookQueries $bookQueries,
+        protected BookshelfQueries $shelfQueries,
     ) {
     }
 
@@ -35,12 +40,15 @@ class SearchController extends Controller
 
         $this->setPageTitle(trans('entities.search_for_term', ['term' => $fullSearchString]));
 
-        return view('search.all', [
-            'entities'     => $results['results'],
-            'totalResults' => $results['total'],
-            'paginator'    => $paginator,
-            'searchTerm'   => $fullSearchString,
-            'options'      => $searchOpts,
+                return view('search.all', [
+            'entities'      => $results['results'],
+            'totalResults'  => $results['total'],
+            'paginator'     => $paginator,
+            'searchTerm'    => $fullSearchString,
+            'options'       => $searchOpts,
+            'filterUsers'   => User::query()->orderBy('name')->pluck('name', 'slug'),
+            'filterShelves' => $this->shelfQueries->visibleForList()->orderBy('name')->pluck('name', 'slug'),
+            'filterBooks'   => $this->bookQueries->visibleForList()->orderBy('name')->pluck('name', 'slug'),
         ]);
     }
 
